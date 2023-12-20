@@ -1,5 +1,6 @@
 import React from 'react';
 import 해친놈 from '../img/안들린다.jpg';
+
 function About (){
     
     return(

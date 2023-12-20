@@ -1,78 +1,101 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState, useEffect, useCallback } from "react";
 import '../css/App.css'
 import 해달 from '../img/안들린다.jpg';
 
+import Button from '@mui/material/Button';
+import DialogActions from '@mui/material/DialogActions';
 
-
-
-function Todo() {
-  // 초기 todos 초기값을 빈 배열로 생성하겠다는 의미
-  // todos는 할 일 목록 들을 저장하는 공간
+function TodoList() {
   const [todos, setTodos] = useState([]);
-
-  // newTodo 새로운 할 일을 추가 작성할 수 있는 공간
   const [newTodo, setNewTodo] = useState('');
+  const [count, setCount] = useState(0);
+  const [editingIndex, setEditingIndex] = useState(null);
+  const [editTodo, setEditTodo] = useState(''); 
 
-  // 할일이 추가될 때마다 추가할 수 있는 const 생성
   const addTodo = () => {
-    if(newTodo.trim() !== '')
-    // setTodos([...todos, newTodo]) 현재 입력되어있는 할 일 목록
-    // 배열인 todos를 복사해서 복사한 todos에 새로운 할일인 newTodo를 배열에 추가한 후
-    // 할 일 목록 설정에 newTodo가 추가된 목록으로 최종 설정해주기 위한 setTodos
     setTodos([...todos, newTodo]);
-
-    // 저장된 할 일 목록을 초기화 시켜주기 위해 setNetTodo를 초기화 시켜줌
     setNewTodo('');
+    setCount((count) => count + 1);
   };
 
-  // 할 일을 삭제할 때마다 삭제할 수 있는 const 생성
   const removeTodo = (index) => {
-    // 현재 할 일 목록 배열을 복사
-    const updateTodos = [...todos];
-    // 복사된 배열에서 지정된 자리값(index) 를 1개 제거하겠다는 의미
-    // updateTodos : 복사된 배열
-    updateTodos.splice(index,1);
-    // slice : 제거
-    // splice : 배열 조작
-    // slice : 배열 일부분 복사해서 새로운 배열 반환 원본에 있던 배열은 변경되지 않지만 시작 = 종료 인덱스
-    // splice : 배열의 내용을 수정하거나 삭제하고, 필요에 따라 새로운 요소를 추가할 수 있음
-
-
-    // 내가 제거하고 싶은 할 일을 제거한 후
-    // setTodos를 활용해서 할 일 목록을 재설정 
-    setTodos(updateTodos);
+    const updatedTodos = [...todos];
+    updatedTodos.splice(index, 1);
+    setTodos(updatedTodos);
+    setCount((count) => count - 1);
   };
-  
+
+  const startEditing = (index, todo) => {
+    setEditingIndex(index);
+    setEditTodo(todo);
+  };
+
+  const saveEdit = () => {
+    const updatedTodos = [...todos];
+    updatedTodos[editingIndex] = editTodo;
+    setTodos(updatedTodos);
+    setEditingIndex(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingIndex(null);
+    setEditTodo('');
+  };
+
   useEffect(() => {
-    console.log(`확인:`+todos);
-  }, [todos]);
+    document.title = `할일 갯수 : ${count}`;
+  }, [count]);
 
   return (
     <div>
-      <h2>useState를 활용한 To do List</h2>
+      <h2>To do List</h2>
       <div id="test">
-        <img src={해달}/>
-        <br/>
-        <input type="text" value={newTodo} onChange={(e) => setNewTodo(e.target.value)} />
-        <button onClick={addTodo}>할 일 추가하기</button>
-
-        <ul>
-          {todos.map((todo, index) => (
-            <li key={index}>
-              {todo}
-              <div>
-              <button onClick={() => removeTodo(index)}>삭제하기</button>
-              <button onClick={() => removeTodo(index)}>삭제하기</button>
-              </div>
-            </li>
-          ))}
-        </ul>
+      <img src={해달}/>
+      <br/>
+        <input
+          type="text"
+          value={newTodo}
+          onChange={(e) => setNewTodo(e.target.value)}
+        />
+        <Button onClick={addTodo}>추가하기</Button>
       </div>
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>
+            {editingIndex === index ? (
+              <div id="test">
+                <input
+                  type="text"
+                  value={editTodo}
+                  onChange={(e) => setEditTodo(e.target.value)}
+                />
+                <button onClick={saveEdit}>저장</button>
+                <button onClick={cancelEdit}>취소</button>
+              </div>
+            ) : (
+              <div id="test">
+                {todo}
+                <DialogActions>
+                <Button onClick={() => startEditing(index, todo)}>수정하기</Button>
+                <Button onClick={() => removeTodo(index)}>삭제하기</Button>
+                </DialogActions>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
 
-export default Todo;
+function MiniApp() {
+  return (
+    <div>
+      <TodoList />
+    </div>
+  );
+}
+export default MiniApp;
 /*
 my-app
 map 배열 객체 메서드

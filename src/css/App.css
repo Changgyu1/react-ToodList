@@ -6,11 +6,7 @@ body {
 }
 
 header {
-  background-image: url("../img/안들린다.jpg");
-  background-repeat: round;
   background-color: #ffd8d8;
-  width: 100%;
-  height: 100%;
   color: white;
   padding: 1rem;
   text-align: center;
@@ -45,7 +41,4 @@ footer {
   position: fixed;
   bottom: 0;
   width: 100%;
-}
-#test{
-  text-align: center;
 }
